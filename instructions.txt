@@ -1,0 +1,68 @@
+main.rs
+Responsibility: Acts as the entry point for your shell.
+What it does:
+
+Initializes the program.
+
+Calls the function that starts the shell loop (defined in shell.rs).
+
+Should be minimal — think of it like a bootloader.
+
+📂 shell.rs
+Responsibility: Coordinates the core shell logic.
+What it does:
+
+Implements the main loop: read input → parse → execute.
+
+Calls the appropriate functions from parser.rs and executor.rs.
+
+Handles flow control like checking for the "exit" command.
+
+This is where your shell "lives" — think of it as the orchestrator.
+
+📂 parser.rs
+Responsibility: Handles user input and breaks it down into usable components.
+What it does:
+
+Reads input from standard input.
+
+Strips whitespace and newline characters.
+
+Splits the input into command and arguments (usually a Vec<String>).
+
+Prepares the command in a format that executor.rs can use.
+
+No execution logic happens here — only parsing and sanitization.
+
+📂 executor.rs
+Responsibility: Executes parsed commands.
+What it does:
+
+Receives the command and arguments from parser.rs.
+
+Uses system tools to spawn and run processes.
+
+Waits for processes to complete (synchronously).
+
+Handles errors like invalid commands or failed processes.
+
+May expand later to handle things like background jobs or redirection.
+
+📂 utils.rs (optional, but useful)
+Responsibility: Contains helper functions that don’t belong in parser or executor.
+What it might include:
+
+Error formatting or output styling.
+
+Screen clearing, help messages, or logging.
+
+Any small functionality that supports the main modules but doesn’t logically belong in them.
+
+🔁 How they interact:
+main.rs calls the main shell loop in shell.rs.
+
+shell.rs reads user input via parser.rs.
+
+Parsed commands go to executor.rs, which runs them.
+
+Optional helpers come from utils.rs.
