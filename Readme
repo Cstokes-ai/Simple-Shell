@@ -1,0 +1,89 @@
+# SimpleShellRust
+
+A minimal, modular shell written in Rust. This project demonstrates how to build a simple command-line shell by splitting responsibilities into clear modules.
+
+## Project Structure
+
+```
+src/
+│
+├── main.rs       # Entry point, starts the shell loop
+├── shell.rs      # Main shell logic: loop, parse, execute, flow control
+├── parser.rs     # Reads and parses user input
+├── executor.rs   # Executes parsed commands
+└── utils.rs      # (Optional) Helper functions
+```
+
+## Module Responsibilities
+
+### main.rs
+- **Entry point** for the shell.
+- Initializes the program.
+- Calls the shell loop in `shell.rs`.
+- Should be minimal—think of it as a bootloader.
+
+### shell.rs
+- **Orchestrates** the shell logic.
+- Implements the main loop: read input → parse → execute.
+- Calls functions from `parser.rs` and `executor.rs`.
+- Handles flow control (e.g., checking for the `exit` command).
+
+### parser.rs
+- **Handles user input** and breaks it down into usable components.
+- Reads input from standard input.
+- Strips whitespace and newline characters.
+- Splits input into command and arguments (`Vec<String>`).
+- Prepares commands for `executor.rs`.
+- No execution logic—only parsing and sanitization.
+
+### executor.rs
+- **Executes parsed commands**.
+- Receives command and arguments from `parser.rs`.
+- Uses system tools to spawn and run processes.
+- Waits for processes to complete.
+- Handles errors (invalid commands, failed processes).
+- May be expanded for background jobs or redirection.
+
+### utils.rs (optional)
+- **Helper functions** that don’t belong in parser or executor.
+- Examples: error formatting, output styling, screen clearing, help messages, logging.
+
+## How the Modules Interact
+
+1. `main.rs` calls the main shell loop in `shell.rs`.
+2. `shell.rs` reads user input via `parser.rs`.
+3. Parsed commands go to `executor.rs`, which runs them.
+4. Optional helpers come from `utils.rs`.
+
+## Getting Started
+
+### Prerequisites
+
+- [Rust](https://www.rust-lang.org/tools/install) (latest stable recommended)
+
+### Build and Run
+
+```sh
+cargo build
+cargo run
+```
+
+## Example Usage
+
+```sh
+$ cargo run
+simpleshell> echo Hello, world!
+Hello, world!
+simpleshell> exit
+$
+```
+
+## Contributing
+
+Pull requests and suggestions are welcome! Please open an issue first to discuss changes.
+
+## License
+
+This project is licensed under the MIT License.
+
+**Happy hacking!**
