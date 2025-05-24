@@ -1,0 +1,110 @@
+echo|Print text to the terminal
+cd|Change the current directory
+ls|List directory contents
+pwd|Print current working directory
+mkdir|Create a new directory
+rmdir|Remove an empty directory
+rm|Remove files or directories
+cp|Copy files or directories
+mv|Move or rename files or directories
+touch|Create an empty file
+cat|Display file content
+more|View file content one screen at a time
+less|Scroll through file content
+nano|Open text editor
+vim|Open advanced text editor
+man|Show manual for a command
+clear|Clear the terminal screen
+exit|Exit the shell
+whoami|Show current user
+date|Show the current date and time
+time|Show execution time of a command
+df|Display disk space usage
+du|Estimate file space usage
+free|Show memory usage
+top|Display running processes
+ps|Show process status
+kill|Send a signal to a process
+chmod|Change file permissions
+chown|Change file owner
+ifconfig|Configure network interfaces
+ip|Show/manipulate routing and devices
+ping|Test network connectivity
+traceroute|Trace network route
+netstat|Show network statistics
+uptime|Show how long system has been running
+hostname|Show system hostname
+uname|Show system information
+history|Show command history
+alias|Create command alias
+unalias|Remove command alias
+grep|Search text using patterns
+find|Search for files
+locate|Find files by name
+head|Show first lines of a file
+tail|Show last lines of a file
+wc|Word, line, and byte count
+cut|Cut sections from each line of input
+sort|Sort lines of text
+uniq|Filter duplicate lines
+tee|Redirect output to file and screen
+xargs|Build and execute command lines
+tar|Archive files
+gzip|Compress files
+gunzip|Decompress .gz files
+zip|Compress to .zip
+unzip|Extract .zip files
+scp|Secure copy between machines
+ssh|Connect to remote shell
+wget|Download files from web
+curl|Transfer data from URLs
+env|Show environment variables
+export|Set environment variables
+read|Read a line of input
+sleep|Pause execution for seconds
+wait|Wait for background processes
+bg|Resume job in background
+fg|Resume job in foreground
+jobs|Show background jobs
+nohup|Run command immune to hangups
+cron|Schedule recurring tasks
+crontab|Edit cron jobs
+service|Start/stop system services
+systemctl|Control system services
+mount|Mount a filesystem
+umount|Unmount a filesystem
+lsblk|List block devices
+blkid|Show block device attributes
+fdisk|Partition a disk
+mkfs|Create a filesystem
+fsck|Check a filesystem
+dd|Convert and copy files
+alias|Create a shortcut for a command
+which|Show location of executable
+whereis|Find binary/source/manual
+basename|Extract file name from path
+dirname|Extract directory path
+stat|Show file status
+file|Determine file type
+diff|Show differences between files
+cmp|Compare two files byte by byte
+ssh-keygen|Generate SSH key pair
+adduser|Create a new user
+deluser|Delete a user
+passwd|Change user password
+su|Switch user
+sudo|Run command as superuser
+groups|Show user's groups
+id|Show user ID and group ID
+who|Show who is logged in
+last|Show login history
+reboot|Restart the system
+shutdown|Power off system
+uptime|Show system uptime
+dmesg|Print kernel messages
+lsmod|List loaded kernel modules
+modprobe|Add/remove kernel modules
+journalctl|View system logs
+logrotate|Manage log file rotation
+hostnamectl|Set system hostname
+timedatectl|Set system time

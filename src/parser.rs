@@ -18,9 +18,9 @@ No execution logic happens here — only parsing and sanitization.
 */
 
 
-pub fn user_input()-> String {
+pub fn user_input()-> Vec<String> {
     let mut input = String:: new();
-    std:: io::stdiin()
+    std:: io::stdin()
         .read_line(&mut input)
         .expect("Failed to read line");
     let input = input.trim(); // Remove whitespace and newline characters
@@ -39,6 +39,6 @@ pub fn user_input()-> String {
         command.push(' ');
     }
     command.pop();
-    
 
+    args
 }
