@@ -1,80 +1,60 @@
-//do this fiel second.
-
 /*
 executor.rs
 Responsibility: Executes parsed commands.
 
 What it does:
-- Receives the command and arguments as a Vec<String> from the shell orchestrator (not from parser.rs directly).
-- Reads commands.txt to look up command descriptions and validate commands.
-- Uses system tools to spawn and run processes based on the provided command and arguments.
+- Receives the command and arguments as a Vec<String> from the shell orchestrator.
+- Uses system tools to spawn and run processes.
 - Waits for processes to complete (synchronously).
 - Handles errors like invalid commands or failed processes.
-- Can be expanded later to handle things like background jobs or redirection.
+- May expand later to handle things like background jobs or redirection.
 
 Note:
 - This module does not parse user input or know about parser.rs.
 - It only executes commands passed to it in the correct format.
 */
 
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-
-/// Reads the commands.txt file and returns a HashMap of command -> description.
-/// This allows the shell to look up what a command is supposed to do.
-pub fn load_command_descriptions(path: &str) -> HashMap<String, String> {
-    let mut commands = HashMap::new();
-    if let Ok(file) = File::open(path) {
-        let reader = BufReader::new(file);
-        for line in reader.lines().flatten() {
-            if let Some((cmd, desc)) = line.split_once('|') {
-                commands.insert(cmd.trim().to_string(), desc.trim().to_string());
-            }
-        }
-    }
-    commands
-}
-
-/// Checks if the command exists in the loaded command descriptions and executes it if valid.
-/// Prints a helpful message if the command is not recognized.
-pub fn execute_command(args: Vec<String>, command_descriptions: &HashMap<String, String>) {
+pub fn execute_command(args: Vec<String>) {
     if args.is_empty() {
         return;
     }
     let command = &args[0];
+    let command_args = &args[1..];
 
-    // Check if the command exists in the command descriptions
-    if let Some(description) = command_descriptions.get(command) {
-        // Optionally print what the command is supposed to do
-        println!("{}: {}", command, description);
+    #[cfg(windows)]
+    let mut cmd = {
+        // Run Windows built-ins through cmd.exe
+        let builtins = ["dir", "copy", "del", "type", "cls", "echo", "cd", "chdir", "pause", "help", "goto" , "notepad", "mkdir" , "move" , "erase" ];
+        if builtins.contains(&command.as_str()) {
+            let mut c = std::process::Command::new("cmd");
+            c.args(["/C", command]);
+            c.args(command_args);
+            c
+        } else {
+            let mut c = std::process::Command::new(command);
+            c.args(command_args);
+            c
+        }
+    };
 
-        // Call a separate function to actually run the process
-        run_process(&args);
-    } else {
-        eprintln!("Unknown command: '{}'. Type 'help' for a list of commands.", command);
-    }
-}
+    #[cfg(not(windows))]
+    let mut cmd = {
+        let mut c = std::process::Command::new(command);
+        c.args(command_args);
+        c
+    };
 
-/// Actually runs the process using std::process::Command.
-/// This function assumes the command is valid.
-fn run_process(args: &[String]) {
-    let args_ref: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
-
-    let output = std::process::Command::new(args_ref[0])
-        .args(&args_ref[1..])
-        .output();
-
-    match output {
+    match cmd.output() {
         Ok(output) => {
-            if output.status.success() {
+            if !output.stdout.is_empty() {
                 print!("{}", String::from_utf8_lossy(&output.stdout));
-            } else {
-                eprintln!("{}", String::from_utf8_lossy(&output.stderr));
+            }
+            if !output.stderr.is_empty() {
+                eprint!("{}", String::from_utf8_lossy(&output.stderr));
             }
         }
         Err(e) => {
-            eprintln!("Failed to execute command: {}", e);
+            eprintln!("Failed to execute command '{}': {}", command, e);
         }
     }
 }

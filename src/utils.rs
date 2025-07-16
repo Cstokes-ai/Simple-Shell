@@ -23,16 +23,3 @@ pub fn clear_screen() {
             .unwrap();
     }
 }
-
-// Prints a simple help message listing available commands
-pub fn print_help(commands: &std::collections::HashMap<String, String>) {
-    println!("Available commands:");
-    for (cmd, desc) in commands {
-        println!("  {:<10} - {}", cmd, desc);
-    }
-}
-
-// Prints an error message in a standardized way
-pub fn print_error(msg: &str) {
-    eprintln!("Error: {}", msg);
-}
