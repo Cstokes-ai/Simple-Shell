@@ -1,7 +1,11 @@
 [package]
 name = "SimpleshellRust"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-rustyline = "15.0.0"
+rustyline = "16.0.0"
+mime_guess = "2.0.0"
+winres = "0.1.12"
+egui = "0.32.0"
+eframe = "0.32.0"

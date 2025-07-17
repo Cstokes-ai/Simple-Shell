@@ -3,11 +3,12 @@ use crate::executor;
 use crate::utils;
 use rustyline::error::ReadlineError;
 use rustyline::DefaultEditor;
+use mime_guess;
 
 pub fn shell() {
     let mut rl = DefaultEditor::new().unwrap();
     println!("Welcome to Simpleshell!");
-    println!("Type 'exit' to quit, ");
+    println!("Type 'exit' to quit.");
     loop {
         let readline = rl.readline("simpleshell> ");
         match readline {
@@ -35,7 +36,6 @@ pub fn shell() {
                         println!("{}", args[1..].join(" "));
                     }
                     "dir" => {
-                        executor::execute_command(args);
                         if let Ok(entries) = std::fs::read_dir(".") {
                             for entry in entries {
                                 if let Ok(entry) = entry {
@@ -47,7 +47,6 @@ pub fn shell() {
                         }
                     }
                     "copy" => {
-                        executor::execute_command(args);
                         if args.len() > 2 {
                             let src = &args[1];
                             let dest = &args[2];
@@ -59,34 +58,36 @@ pub fn shell() {
                         }
                     }
                     "del" => {
-                        executor::execute_command(args);
                         if args.len() > 1 {
                             let path = &args[1];
-                            if let Err(e) = std::fs:;remove_file(path) {
+                            if let Err(e) = std::fs::remove_file(path) {
                                 eprintln!("del: {}", e);
-
                             }
                         } else {
                             eprintln!("del: missing file path");
                         }
                     }
                     "type" => {
-                        executor::execute_command(args);
                         if args.len() > 1 {
                             let path = &args[1];
-                            if let Ok(content) = std::fs::read_to_string(path){
+                            if let Ok(content) = std::fs::read_to_string(path) {
                                 println!("{}", content);
-                                println!("File type: {}", mime_guess::from_path(path).first().unwrap_or("application/octet-stream"));
+                                let filetype = mime_guess::from_path(path)
+                                    .first()
+                                    .map(|m| m.essence_str().to_string()) // Convert to an owned String
+                                    .unwrap_or_else(|| "application/octet-stream".to_string()); // Provide a default value as String
+                                println!("File type: {}", filetype);
                             } else {
                                 eprintln!("type: failed to read file '{}'", path);
                             }
+                        } else {
+                            eprintln!("type: missing file path");
                         }
                     }
                     "cls" => utils::clear_screen(),
                     "pause" => {
                         println!("Press Enter to continue...");
-                        let _ = rl.readLine("");
-
+                        let _ = rl.readline("");
                     }
                     "help" => {
                         println!("Available commands:");
@@ -101,12 +102,9 @@ pub fn shell() {
                         println!("pause - Pause execution until Enter is pressed");
                         println!("exit - Exit the shell");
                     }
-                    
                     _ => {
                         executor::execute_command(args);
                     }
-                    
-
                 }
             }
             Err(ReadlineError::Interrupted) | Err(ReadlineError::Eof) => {
