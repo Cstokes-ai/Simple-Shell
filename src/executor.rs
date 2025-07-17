@@ -24,7 +24,10 @@ pub fn execute_command(args: Vec<String>) {
     #[cfg(windows)]
     let mut cmd = {
         // Run Windows built-ins through cmd.exe
-        let builtins = ["dir", "copy", "del", "type", "cls", "echo", "cd", "chdir", "pause", "help", "goto" , "notepad", "mkdir" , "move" , "erase" ];
+        let builtins = ["dir", "copy", "del", "type", "cls", "echo", "cd", "chdir", "pause", "help", "goto" , "notepad", "mkdir" , "move" , "erase",
+        "shift", "tree" , "ver" , "xcopy", "print" , "attrib", "fc", "find", "findstr", "format", "label", "md", "rd", "ren", "set", "setlocal", "sort" , "start" , "tasklist" , "taskkill" , 
+        "title" , "timeout" , "tree" , "where" , "whoami" , "wmic" , "xcopy" , "assoc", "break", "call", "cd", "chcp", "cls", "color", "comp", "compact", "continue", "copy", "date", "del", "dir",
+         ];
         if builtins.contains(&command.as_str()) {
             let mut c = std::process::Command::new("cmd");
             c.args(["/C", command]);
