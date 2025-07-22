@@ -14,9 +14,9 @@ Note:
 - It only executes commands passed to it in the correct format.
 */
 
-pub fn execute_command(args: Vec<String>) {
+pub fn execute_command(args: Vec<String>) -> String {
     if args.is_empty() {
-        return;
+        return "No command entered.".to_string();
     }
     let command = &args[0];
     let command_args = &args[1..];
@@ -24,10 +24,9 @@ pub fn execute_command(args: Vec<String>) {
     #[cfg(windows)]
     let mut cmd = {
         // Run Windows built-ins through cmd.exe
-        let builtins = ["dir", "copy", "del", "type", "cls", "echo", "cd", "chdir", "pause", "help", "goto" , "notepad", "mkdir" , "move" , "erase",
-        "shift", "tree" , "ver" , "xcopy", "print" , "attrib", "fc", "find", "findstr", "format", "label", "md", "rd", "ren", "set", "setlocal", "sort" , "start" , "tasklist" , "taskkill" , 
-        "title" , "timeout" , "tree" , "where" , "whoami" , "wmic" , "xcopy" , "assoc", "break", "call", "cd", "chcp", "cls", "color", "comp", "compact", "continue", "copy", "date", "del", "dir",
-         ];
+        let builtins = ["dir", "copy", "del", "type", "cls", "echo", "cd", "chdir", "pause", "help", "goto", "notepad", "mkdir", "move", "erase",
+        "shift", "tree", "ver", "xcopy", "print", "attrib", "fc", "find", "findstr", "format", "label", "md", "rd", "ren", "set", "setlocal", "sort", "start", "tasklist", "taskkill", 
+        "title", "timeout", "tree", "where", "whoami", "wmic", "xcopy", "assoc", "break", "call", "cd", "chcp", "cls", "color", "comp", "compact", "continue", "copy", "date", "del", "dir"];
         if builtins.contains(&command.as_str()) {
             let mut c = std::process::Command::new("cmd");
             c.args(["/C", command]);
@@ -49,15 +48,14 @@ pub fn execute_command(args: Vec<String>) {
 
     match cmd.output() {
         Ok(output) => {
-            if !output.stdout.is_empty() {
-                print!("{}", String::from_utf8_lossy(&output.stdout));
-            }
-            if !output.stderr.is_empty() {
-                eprint!("{}", String::from_utf8_lossy(&output.stderr));
+            let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+            let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+            if !stderr.is_empty() {
+                format!("STDOUT:\n{}\nSTDERR:\n{}", stdout, stderr)
+            } else {
+                stdout
             }
         }
-        Err(e) => {
-            eprintln!("Failed to execute command '{}': {}", command, e);
-        }
+        Err(e) => format!("Failed to execute command '{}': {}", command, e),
     }
 }

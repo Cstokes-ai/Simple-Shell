@@ -1,7 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // Hide console window on Windows in release
 
 use eframe::egui;
-
+mod executor;
+use executor::execute_command;
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions::default();
     eframe::run_native(
@@ -20,43 +21,41 @@ struct MyApp {
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
+            // Change the background color to black
+            ctx.set_visuals(egui::Visuals::dark()); // Use a dark theme
             ui.heading("Simpleshell GUI");
+            // add a background image to the app
+            ui.add()
 
+            // Single input line for command and output
             ui.horizontal(|ui| {
-                ui.label("Command:");
-                ui.text_edit_singleline(&mut self.command);
+                ui.label("$:"); // PowerShell-style prompt
+                let response = ui.text_edit_singleline(&mut self.command);
+                if response.lost_focus() && response.ctx.input(|i| i.key_pressed(egui::Key::Enter)) {
+                    self.output = execute_command_gui(&self.command);
+                    self.command.clear(); // Clear the command after execution
+                }
             });
-
-            if ui.button("Run").clicked() {
-                self.output = execute_command_gui(&self.command);
-            }
 
             ui.separator();
             ui.label("Output:");
-            ui.text_edit_multiline(&mut self.output);
+            // have the output box be multiline and scrollable and cover the entire screen and not just a portion
+            egui::ScrollArea::vertical()
+                .auto_shrink([false; 2])
+                .max_height(f32::INFINITY)
+                .show(ui, |ui| {
+                    ui.add(egui::TextEdit::multiline(&mut self.output).desired_rows(10)); // Display output in a multiline box
+                });
         });
     }
 }
 
 fn execute_command_gui(command: &str) -> String {
-    use std::process::Command;
-
     if command.is_empty() {
         return "No command entered.".to_string();
     }
 
-    let parts: Vec<&str> = command.split_whitespace().collect();
-    let cmd = parts[0];
-    let args = &parts[1..];
-
-    let output = Command::new(cmd).args(args).output();
-
-    match output {
-        Ok(output) => {
-            let stdout = String::from_utf8_lossy(&output.stdout);
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            format!("STDOUT:\n{}\nSTDERR:\n{}", stdout, stderr)
-        }
-        Err(e) => format!("Failed to execute command: {}", e),
-    }
+    // Use the executor module to handle command execution and return the output
+    let args: Vec<String> = command.split_whitespace().map(String::from).collect();
+    executor::execute_command(args) // Return the output from executor::execute_command
 }
